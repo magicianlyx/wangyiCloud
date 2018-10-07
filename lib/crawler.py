@@ -122,6 +122,7 @@ class SongSheet:
         self.musics.append(music)
 
     # 按歌手名分组 歌单内各个歌手的歌曲数
+    # dict[author]=count
     def get_play_time_author_slice(self) -> dict:
         diagrams = dict()
         for music in self.musics:
@@ -131,6 +132,8 @@ class SongSheet:
                 else:
                     diagrams[author] = 1
         diagrams = dict(sorted(diagrams.items(), key=lambda x: x[1], reverse=True))
+        diagrams["unknown"] = diagrams[""]
+        del diagrams[""]
         return diagrams
 
 
