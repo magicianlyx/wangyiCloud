@@ -1,10 +1,8 @@
 from selenium import webdriver
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.support.ui import WebDriverWait
-import operator
 from bs4 import BeautifulSoup
 import time
-import operator
 
 base_url = "https://music.163.com/"
 
@@ -16,20 +14,25 @@ def string_format(s):
 
 class MusicBase:
     name = ""  # 歌曲名
-    author = ""  # 作者名
+    authors = []  # type:list[str]
 
 
 # 音乐信息（排行榜）
 class MusicInfo(MusicBase):
     play_time = 0  # 歌曲播放次数
 
-    def __init__(self, name: str, author: str, play_time: int):
+    def __init__(self, name: str, author, play_time: int):
         self.name = name
-        self.author = author
         self.play_time = play_time
+        if type(author) == str:
+            self.authors = [author]
+        elif type(author) == list:
+            self.authors = author
+        else:
+            assert "unknown type"
 
     def __str__(self):
-        return "name:%-10s  author:%-10s  play_time:%-10d" % (self.name, self.author, self.play_time)
+        return "name:%-10s  authors:%-10s  play_time:%-10d" % (self.name, self.authors, self.play_time)
 
 
 # 音乐信息（歌单）
@@ -37,14 +40,19 @@ class SongInfo(MusicBase):
     url = ""  # 歌曲链接
     album = ""  # 歌曲所属专辑
 
-    def __init__(self, name: str, author: str, url: str, album: str):
+    def __init__(self, name: str, author, url: str, album: str):
         self.name = name
-        self.author = author
         self.url = url
         self.album = album
+        if type(author) == str:
+            self.authors = [author]
+        elif type(author) == list:
+            self.authors = author
+        else:
+            assert "unknown type"
 
     def __str__(self):
-        return "name:%-10s  author:%-10s  album:%-10s  url:%-10s" % (self.name, self.author, self.album, self.url)
+        return "name:%-10s  authors:%-10s  album:%-10s  url:%-10s" % (self.name, self.authors, self.album, self.url)
 
 
 # 歌手信息
@@ -61,7 +69,7 @@ class AuthorInfo:
     def set_type(self, type):
         self.type = type
 
-    def AddMusics(self, music_info: [MusicInfo]):
+    def AddMusics(self, music_info: MusicInfo):
         self.musics.append(music_info.name)
         self.play_time += music_info.play_time
         return self
@@ -82,13 +90,14 @@ class RankSheet:
     def AddMusics(self, music: MusicInfo):
         self.musics.append(music)
 
-    def get_play_time_author_slice(self)-> dict:
+    def get_play_time_author_slice(self) -> list:
         diagrams = {}
         for music in self.musics:
-            if music.author in diagrams:
-                diagrams[music.author].AddMusics(music)
-            else:
-                diagrams[music.author] = AuthorInfo(music.author).AddMusics(music)
+            for author in music.authors:
+                if author in diagrams.keys():
+                    diagrams[author].AddMusics(music)
+                else:
+                    diagrams[author] = AuthorInfo(author).AddMusics(music)
         list = diagrams.values()
         list = reversed(sorted(list, key=lambda item: item.play_time))
         return list
@@ -114,12 +123,13 @@ class SongSheet:
 
     # 按歌手名分组 歌单内各个歌手的歌曲数
     def get_play_time_author_slice(self) -> dict:
-        diagrams = {}
+        diagrams = dict()
         for music in self.musics:
-            if not music.author in diagrams:
-                diagrams[music.author] = 1
-            else:
-                diagrams[music.author] += 1
+            for author in music.authors:
+                if author in diagrams.keys():
+                    diagrams[author] += 1
+                else:
+                    diagrams[author] = 1
         diagrams = dict(sorted(diagrams.items(), key=lambda x: x[1], reverse=True))
         return diagrams
 
@@ -171,7 +181,7 @@ class WangYiUser:
             play_time = int(bs.find(name='span', attrs={"class": "times f-ff2"}).text[:-1])
             if author == "" or play_time == 0:
                 continue
-            rs.AddMusics(MusicInfo(string_format(name), string_format(author), play_time))
+            rs.AddMusics(MusicInfo(string_format(name), string_format(author).split("/"), play_time))
         return rs
 
     # 获取所有时间的播放排行榜
@@ -205,7 +215,11 @@ class WangYiUser:
             play_time = int(bs.find(name='span', attrs={"class": "times f-ff2"}).text[:-1])
             if author == "" or play_time == 0:
                 continue
-            rs.AddMusics(MusicInfo(string_format(name), string_format(author), play_time))
+            if string_format(author).find("/") != -1:
+                song = MusicInfo(name, string_format(author).split("/"), play_time)
+            else:
+                song = MusicInfo(name, string_format(author), play_time)
+            rs.AddMusics(song)
         return rs
 
     # 获取所有我自己创建的歌单
@@ -277,11 +291,14 @@ class WangYiUser:
         hshows = bs.find_all(name="tr")
         for tr in hshows:
             tds = tr.find_all("td")
-            name = tds[1].find("b").attrs["title"]
-            url = base_url + tds[1].find("a").attrs["href"]
-            author = tds[3].find("div", attrs={"class": "text"}).attrs["title"]
-            album = tds[4].find("div", attrs={"class": "text"}).find("a").attrs["title"]
-            song = SongInfo(name, author, url, album)
+            name = tds[1].find("b").attrs["title"]  # 歌曲名
+            url = base_url + tds[1].find("a").attrs["href"]  # 歌曲url
+            author = tds[3].find("div", attrs={"class": "text"}).attrs["title"]  # 歌手名
+            album = tds[4].find("div", attrs={"class": "text"}).find("a").attrs["title"]  # 专辑名
+            if string_format(author).find("/") != -1:
+                song = SongInfo(name, string_format(author).split("/"), url, album)
+            else:
+                song = SongInfo(name, string_format(author), url, album)
             ss.AddMusics(song)
         return ss
 
