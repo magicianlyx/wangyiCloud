@@ -19,12 +19,35 @@ class MusicInfo:
         return "name:%-10s  author:%-10s  play_time:%-10d" % (self.name, self.author, self.play_time)
 
 
+class AuthorInfo:
+    name = ""
+    type = ""
+    play_time = 0
+    musics = [str]
+
+    def __init__(self, name):
+        self.name = name
+        self.musics = []
+
+    def set_type(self, type):
+        self.type = type
+
+    def AddMusics(self, music_info):
+        self.musics.append(music_info.name)
+        self.play_time += music_info.play_time
+        return self
+
+    def __str__(self):
+        return "author:%-10s  play_time:%-10d  musics:%s" % (self.name, self.play_time, self.musics)
+
+
 class SongSheet:
     name = ""
     musics = [MusicInfo]
 
     def __init__(self, name):
         self.name = name
+        self.musics = []
 
     def AddMusics(self, musics):
         self.musics.append(musics)
@@ -33,20 +56,21 @@ class SongSheet:
         diagrams = {}
         for music in self.musics:
             if music.author in diagrams:
-                diagrams[music.author] += music.play_time
+                diagrams[music.author].AddMusics(music)
             else:
-                diagrams[music.author] = music.play_time
-        diagrams = sorted(diagrams.items(), key=operator.itemgetter(1), reverse=True)
-        return dict(diagrams)
+                diagrams[music.author] = AuthorInfo(music.author).AddMusics(music)
+        list = diagrams.values()
+        list =reversed(sorted(list, key=lambda item: item.play_time))
+        return list
 
 
 class WangYiUser:
     url = "https://music.163.com/#"
 
-    # music_u = "98f67da579a720f31ff2c6147ac96e03d0f2c1d6e895ac5b86fb53f95b3f20a98df3938ae24c1b7cb1417e0302d8b874b4c6e05649d650bf"
     def __init__(self, music_u):
         option = webdriver.ChromeOptions()
-        option.add_argument('disable-infobars')
+        option.add_argument('disable-infobars')  # 不出现"Chrome正在受到自动软件的控制"的提示语
+        option.add_argument("headless")  # 不显示浏览器
         driver = webdriver.Chrome(chrome_options=option)
         action = ActionChains(driver)
         self.music_u = music_u
