@@ -176,15 +176,19 @@ class WangYiUser:
             l = len(lis)
             if len(lis) == 100:
                 break
-        rs = RankSheet("最后一周")
+        rs = RankSheet("最近一周")
         for li in lis:
             bs = BeautifulSoup(li.get_attribute("outerHTML"), "html.parser")
             name = bs.find(name='b').text
-            author = bs.find(name='a', attrs={"class": "s-fc8"}).text
+            author = bs.find(name='a', attrs={"class": "s-fc8"}).parent.attrs["title"]
             play_time = int(bs.find(name='span', attrs={"class": "times f-ff2"}).text[:-1])
             if author == "" or play_time == 0:
                 continue
-            rs.AddMusics(MusicInfo(string_format(name), string_format(author).split("/"), play_time))
+            if "/" in author:
+                song = MusicInfo(name, string_format(author).split("/"), play_time)
+            else:
+                song = MusicInfo(name, string_format(author), play_time)
+            rs.AddMusics(song)
         return rs
 
     # 获取所有时间的播放排行榜
@@ -214,11 +218,11 @@ class WangYiUser:
         for li in lis:
             bs = BeautifulSoup(li.get_attribute("outerHTML"), "html.parser")
             name = bs.find(name='b').text
-            author = bs.find(name='a', attrs={"class": "s-fc8"}).text
+            author = bs.find(name='a', attrs={"class": "s-fc8"}).parent.attrs["title"]
             play_time = int(bs.find(name='span', attrs={"class": "times f-ff2"}).text[:-1])
             if author == "" or play_time == 0:
                 continue
-            if string_format(author).find("/") != -1:
+            if "/" in author:
                 song = MusicInfo(name, string_format(author).split("/"), play_time)
             else:
                 song = MusicInfo(name, string_format(author), play_time)
