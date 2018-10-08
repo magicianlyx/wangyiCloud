@@ -132,8 +132,9 @@ class SongSheet:
                 else:
                     diagrams[author] = 1
         diagrams = dict(sorted(diagrams.items(), key=lambda x: x[1], reverse=True))
-        diagrams["unknown"] = diagrams[""]
-        del diagrams[""]
+        if '' in diagrams.keys():
+            diagrams["unknown"] = diagrams[""]
+            del diagrams[""]
         return diagrams
 
 
@@ -144,7 +145,7 @@ class WangYiUser:
     def __init__(self, music_u):
         option = webdriver.ChromeOptions()
         option.add_argument('disable-infobars')  # 不出现"Chrome正在受到自动软件的控制"的提示语
-        # option.add_argument("headless")  # 不显示浏览器
+        option.add_argument("headless")  # 不显示浏览器
         option.add_argument('Accept-Charset="utf-8"')
         driver = webdriver.Chrome(chrome_options=option)
         action = ActionChains(driver)
@@ -171,16 +172,18 @@ class WangYiUser:
         last_week = self.driver.find_element_by_xpath('//div[@class="j-flag"]')
         timeout = 10
         l = 0
-        while l < 100:
+        idx = 0
+        while l < 100 and idx < 100:
             lis = WebDriverWait(last_week, timeout).until(lambda x: x.find_elements_by_tag_name("li"))
             l = len(lis)
+            idx += 1
             if len(lis) == 100:
                 break
         rs = RankSheet("最近一周")
         for li in lis:
             bs = BeautifulSoup(li.get_attribute("outerHTML"), "html.parser")
             name = bs.find(name='b').text
-            author = bs.find(name='a', attrs={"class": "s-fc8"}).parent.attrs["title"]
+            author = bs.find(name='div', attrs={'class': 'song'}).find('span', attrs={'class': "ar s-fc8"}).find(name='span').attrs["title"]
             play_time = int(bs.find(name='span', attrs={"class": "times f-ff2"}).text[:-1])
             if author == "" or play_time == 0:
                 continue
@@ -218,7 +221,7 @@ class WangYiUser:
         for li in lis:
             bs = BeautifulSoup(li.get_attribute("outerHTML"), "html.parser")
             name = bs.find(name='b').text
-            author = bs.find(name='a', attrs={"class": "s-fc8"}).parent.attrs["title"]
+            author = bs.find(name='div', attrs={'class': 'song'}).find('span', attrs={'class': "ar s-fc8"}).find(name='span').attrs["title"]
             play_time = int(bs.find(name='span', attrs={"class": "times f-ff2"}).text[:-1])
             if author == "" or play_time == 0:
                 continue
