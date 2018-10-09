@@ -32,3 +32,27 @@ def draw_histogram(data, title, file_name):
     # 设置y轴的范围
     plt.ylim(0, max(time) + max(time) * 0.1)
     plt.savefig(file_name + ".png")
+    plt.cla()
+
+
+# 绘制饼形图
+def draw_pie(data, title, file_name):
+    singers = list(data.keys())
+    time = list(data.values())
+
+    # 中文
+    font = {'family': 'SimHei',
+            'weight': 'bold',
+            'size': '7'}
+    plt.rc('font', **font)
+    plt.rc('axes', unicode_minus=False)
+
+    # plt.rcParams['font.sans-serif'] = 'SimHei'  # 设置中文显示
+    label = singers
+    # explode = [0.01 for _ in time]  # 设定各项距离圆心n个半径
+    values = time
+    plt.pie(values,  labels=label, autopct='%1.1f%%')  # 绘制饼图
+    plt.title(title)  # 绘制标题
+    plt.legend()
+    plt.savefig(file_name)  # 保存图片
+    plt.cla()
