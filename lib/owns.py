@@ -284,7 +284,7 @@ class WangYiUser:
             sheets[string_format(alink.text)] = base_url + alink.attrs["href"]
         return sheets
 
-    # 获取指定名歌单的信息
+    # 获取指定名url歌单的信息
     def get_songsheetinfo(self, url) -> SongSheet:
         self.driver.get(url)
         self.driver.switch_to.frame("contentFrame")

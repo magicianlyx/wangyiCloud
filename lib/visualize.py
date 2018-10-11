@@ -45,6 +45,7 @@ def draw_pie(data, title, file_name):
             'weight': 'bold',
             'size': '7'}
     plt.rc('font', **font)
+
     plt.rc('axes', unicode_minus=False)
 
     # plt.rcParams['font.sans-serif'] = 'SimHei'  # 设置中文显示
@@ -53,6 +54,13 @@ def draw_pie(data, title, file_name):
     values = time
     plt.pie(values,  labels=label, autopct='%1.1f%%')  # 绘制饼图
     plt.title(title)  # 绘制标题
+
+    # 字体大小
+    font = {'family': 'SimHei',
+            'weight': 'bold',
+            'size': '7'}
+    plt.rc('font', **font)
+
     plt.legend()
     plt.savefig(file_name)  # 保存图片
     plt.cla()
