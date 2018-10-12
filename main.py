@@ -21,7 +21,8 @@ try:
             break
         idx += 1
         diagrams_part[key] = diagrams[key]
-    draw_histogram(diagrams_part, "所有时间各个歌手歌曲播放次数", "all_time")
+    # draw_histogram(diagrams_part, "所有时间各个歌手歌曲播放次数", "all_time")
+    draw_pie(diagrams_part, "魔术师LYX" + " TOP20 所有时间各个歌手歌曲播放次数", "魔术师LYX" + " all_time")
 
     # 获取最近一周播放排行榜 各个歌手的歌曲播放量
     print("---------------获取最近一周播放排行榜 各个歌手的歌曲播放量-------------------")
@@ -35,7 +36,8 @@ try:
             break
         diagrams_part[item.name] = item.play_time
         idx += 1
-    draw_histogram(diagrams_part, "最近一周各个歌手歌曲播放次数", "last_week")
+    # draw_histogram(diagrams_part, "最近一周各个歌手歌曲播放次数", "last_week")
+    draw_pie(diagrams_part, "魔术师LYX" + " TOP20 最近一周各个歌手歌曲播放次数", "魔术师LYX" + " last_week")
 
     # 获取自己创建的所有歌单
     map = wyu.get_owns_songsheet()
