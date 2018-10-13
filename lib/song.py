@@ -30,14 +30,22 @@ class Song:
         self.driver.switch_to.frame("contentFrame")
         bs = BeautifulSoup(self.driver.find_element_by_xpath('//div[@id="lyric-content"]').get_attribute("outerHTML"),
                            "html.parser")
+        idx = 0
+        lyric = ""
+        while True:
+            try:
+                flag_more = bs.find("div", attrs={"id": "flag_more"}).text
+                crl = bs.find("div", attrs={"class": "crl"}).text
+                lyric_content = self.driver.find_element_by_xpath('//div[@id="lyric-content"]').text
 
-        flag_more = bs.find("div", attrs={"id": "flag_more"}).text
-        crl = bs.find("div", attrs={"class": "crl"}).text
-        lyric_content = self.driver.find_element_by_xpath('//div[@id="lyric-content"]').text
-
-        lyric = lyric_content.replace(crl, "")
-        lyric = lyric.replace("\n", "")
-        lyric = lyric + flag_more
+                lyric = lyric_content.replace(crl, "")
+                lyric = lyric.replace("\n", "")
+                lyric = lyric + flag_more
+                break
+            except:
+                if idx > 10:
+                    break
+                idx += 1
         return lyric
 
 
@@ -69,6 +77,10 @@ class Singer:
         self.driver.get(self.song_search_url)
         self.driver.switch_to.frame("g_iframe")
 
+        song_count = self.driver.find_element_by_xpath('//div[@class="snote s-fc4 ztag"]').find_element_by_tag_name("em").text
+        song_count = int(song_count)
+        n = min(song_count, n)
+
         while len(songs) < n:
             next_page = self.driver.find_element_by_xpath('//a[contains(text(), "下一页")]')
             srchsongst = self.driver.find_element_by_xpath('//*[@class="srchsongst"]')
@@ -85,6 +97,8 @@ class Singer:
                 singers = singers_str.split("/")
                 album = td_div[4].text
                 songs.append(Song(name, singers, url, album))
+            if next_page is None:
+                break
             self.driver.execute_script("document.getElementById('%s').click();" % next_page.get_attribute("id"))
 
         return songs

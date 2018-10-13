@@ -1,10 +1,11 @@
 import matplotlib.pyplot as plt
 import numpy as np
 
+font_size = 5
 # 中文
 font = {'family': 'SimHei',
         'weight': 'bold',
-        'size': '7'}
+        'size': str(font_size)}
 plt.rc('font', **font)
 plt.rc('axes', unicode_minus=False)
 plt.rcParams['figure.figsize'] = (4.0, 4.0) # 设置figure_size尺寸
@@ -25,11 +26,11 @@ def draw_histogram(data, title, file_name):
 
     plt.xticks(x, singers, size='small', rotation=30)
     # x、y轴标签与图形标题
-    plt.xlabel('singer')
-    plt.ylabel('play time')
+    plt.xlabel('x')
+    plt.ylabel('y')
     plt.title(title)
     for a, b in zip(x, y):
-        plt.text(a, b + 0.05, '%.0f' % b, ha='center', va='bottom', fontsize=7)
+        plt.text(a, b + 0.05, '%.0f' % b, ha='center', va='bottom', fontsize=font_size)
     # 设置y轴的范围
     plt.ylim(0, max(time) + max(time) * 0.1)
     plt.savefig(file_name + ".png")
@@ -47,10 +48,6 @@ def draw_pie(data, title, file_name):
     plt.pie(values,  labels=label, autopct='%1.1f%%')  # 绘制饼图
     plt.title(title)  # 绘制标题
 
-    font = {'family': 'SimHei',
-            'weight': 'bold',
-            'size': '3'}
-    plt.rc('font', **font)
 
     plt.legend()
     plt.savefig(file_name)  # 保存图片

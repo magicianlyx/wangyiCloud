@@ -2,13 +2,43 @@ from lib.owns import *
 from lib.song import *
 from lib.visualize import *
 from lib.config import *
-from lib.driver import driver
+from lib.driver import init_driver
+from nlp.statistics import *
+from model.mgo import *
+import jieba
 
-singer = Singer("陈百强")
-list = singer.get_top_n_songs(100)
+init_driver()
+
+# # 获取陈百强所有歌曲的信息并写入mongo
+# singer = Singer("陈百强")
+# list = singer.get_top_n_songs(1000)
+# for item in list:
+#     lyric = item.get_lyric()
+#     print(lyric)
+#     insert_songinfo(item.name, item.authors, item.album, item.url, lyric)
+
+list = get_songinfos()
+print("song count:",len(list))
+words = []
 for item in list:
-    lyric = item.get_lyric()
-    print(lyric)
+    lyric = item.lyric
+    words += jieba.cut(lyric)
+
+diagrams = word_statistics(words)
+
+diagrams_part = dict()
+idx = 0
+for key in diagrams.keys():
+    if idx > 20:
+        break
+    idx += 1
+    diagrams_part[key] = diagrams[key]
+
+draw_histogram(diagrams_part, "陈百强歌词top20词汇", "陈百强歌词top20词汇")
+for key, value in diagrams_part.items():
+    print("word:", key, "  count: ", value)
+
+
 # music_u = get_musci_u("魔术师LYX")
 # # 获取cookie身份
 # wyu = WangYiUser(music_u)

@@ -10,7 +10,10 @@ option.add_argument('Accept-Charset="utf-8"')
 driver = webdriver.Chrome(chrome_options=option)
 action = ActionChains(driver)
 driver.implicitly_wait(4)
-driver.get("https://music.163.com")
-music_u = get_musci_u("魔术师LYX")
-driver.add_cookie({'name': 'MUSIC_U', 'value': music_u})
-driver.refresh()
+
+
+def init_driver():
+    driver.get("https://music.163.com")
+    music_u = get_musci_u("魔术师LYX")
+    driver.add_cookie({'name': 'MUSIC_U', 'value': music_u})
+    driver.refresh()
