@@ -5,7 +5,9 @@ from lib.config import *
 from lib.driver import driver
 
 singer = Singer("陈百强", driver)
-singer.get_top_n_songs()
+list = singer.get_top_n_songs()
+for item in list:
+    print(item.name, item.url, item.singers, item.album)
 
 # music_u = get_musci_u("魔术师LYX")
 # # 获取cookie身份

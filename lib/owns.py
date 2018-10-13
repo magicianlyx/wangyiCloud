@@ -39,7 +39,7 @@ class MusicInfoRank(MusicBase):
 
 
 # 音乐信息（歌单）
-class MusicInfoSheet(MusicBase):
+class SongInfo(MusicBase):
     url = ""  # 歌曲链接
     album = ""  # 歌曲所属专辑
 

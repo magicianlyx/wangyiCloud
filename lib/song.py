@@ -11,9 +11,10 @@ class Song:
     album = ""  # type:str
     url = ""  # type:str
 
-    def __init__(self, name: str, singers, url: str):
+    def __init__(self, name: str, singers, url: str, album: str):
         self.name = name
         self.url = url
+        self.album = album
         if type(singers) == str:
             self.singers = [singers]
         elif type(singers) == list:
@@ -63,10 +64,13 @@ class Singer:
 
             for div in song_divs:
                 td_div = div.find_elements_by_xpath('./div')
-                name = td_div[1].find_element_by_tag_name("b").get_attribute("title")
+                # name = td_div[1].find_element_by_tag_name("b").get_attribute("title")
+                name = td_div[1].find_element_by_tag_name("b").text
                 url = td_div[1].find_element_by_tag_name("a").get_attribute("href")
-                singers = td_div[3].find_element_by_tag_name("span").text
-                songs.append(Song(name, url, singers))
+                singers_str = td_div[3].find_element_by_xpath("./div").text
+                singers = singers_str.split("/")
+                album = td_div[4].text
+                songs.append(Song(name, url, singers,album))
             self.driver.execute_script("document.getElementById('%s').click();" % next_page.get_attribute("id"))
 
         return songs
