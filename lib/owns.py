@@ -1,8 +1,10 @@
+import time
+
 from selenium import webdriver
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.support.ui import WebDriverWait
+
 from bs4 import BeautifulSoup
-import time
 
 base_url = "https://music.163.com/"
 
@@ -17,8 +19,9 @@ class MusicBase:
     authors = []  # type:list[str]
 
 
+
 # 音乐信息（排行榜）
-class MusicInfo(MusicBase):
+class MusicInfoRank(MusicBase):
     play_time = 0  # 歌曲播放次数
 
     def __init__(self, name: str, author, play_time: int):
@@ -36,7 +39,7 @@ class MusicInfo(MusicBase):
 
 
 # 音乐信息（歌单）
-class SongInfo(MusicBase):
+class MusicInfoSheet(MusicBase):
     url = ""  # 歌曲链接
     album = ""  # 歌曲所属专辑
 
@@ -69,7 +72,7 @@ class AuthorInfo:
     def set_type(self, type):
         self.type = type
 
-    def AddMusics(self, music_info: MusicInfo):
+    def AddMusics(self, music_info: MusicInfoRank):
         self.musics.append(music_info.name)
         self.play_time += music_info.play_time
         return self
@@ -85,9 +88,9 @@ class RankSheet:
 
     def __init__(self, name):
         self.name = name
-        self.musics = []  # type: list[MusicInfo]
+        self.musics = []  # type: list[MusicInfoRank]
 
-    def AddMusics(self, music: MusicInfo):
+    def AddMusics(self, music: MusicInfoRank):
         self.musics.append(music)
 
     def get_play_time_author_slice(self) -> list:
@@ -114,11 +117,11 @@ class SongSheet:
     def __init__(self, name: str, play_time: int, url: str, created_time):
         self.name = name
         self.play_time = play_time
-        self.musics = []  # type: list[SongInfo]
+        self.musics = []  # type: list[MusicInfoSheet]
         self.url = url
         self.created_time = created_time
 
-    def AddMusics(self, music: SongInfo):
+    def AddMusics(self, music: MusicInfoSheet):
         self.musics.append(music)
 
     # 按歌手名分组 歌单内各个歌手的歌曲数
@@ -188,9 +191,9 @@ class WangYiUser:
             if author == "" or play_time == 0:
                 continue
             if "/" in author:
-                song = MusicInfo(name, string_format(author).split("/"), play_time)
+                song = MusicInfoRank(name, string_format(author).split("/"), play_time)
             else:
-                song = MusicInfo(name, string_format(author), play_time)
+                song = MusicInfoRank(name, string_format(author), play_time)
             rs.AddMusics(song)
         return rs
 
@@ -226,9 +229,9 @@ class WangYiUser:
             if author == "" or play_time == 0:
                 continue
             if "/" in author:
-                song = MusicInfo(name, string_format(author).split("/"), play_time)
+                song = MusicInfoRank(name, string_format(author).split("/"), play_time)
             else:
-                song = MusicInfo(name, string_format(author), play_time)
+                song = MusicInfoRank(name, string_format(author), play_time)
             rs.AddMusics(song)
         return rs
 
@@ -306,9 +309,9 @@ class WangYiUser:
             author = tds[3].find("div", attrs={"class": "text"}).attrs["title"]  # 歌手名
             album = tds[4].find("div", attrs={"class": "text"}).find("a").attrs["title"]  # 专辑名
             if string_format(author).find("/") != -1:
-                song = SongInfo(name, string_format(author).split("/"), url, album)
+                song = MusicInfoSheet(name, string_format(author).split("/"), url, album)
             else:
-                song = SongInfo(name, string_format(author), url, album)
+                song = MusicInfoSheet(name, string_format(author), url, album)
             ss.AddMusics(song)
         return ss
 
