@@ -37,6 +37,7 @@ class MusicInfo(MusicBase):
 
 # 音乐信息（歌单）
 class SongInfo(MusicBase):
+
     url = ""  # 歌曲链接
     album = ""  # 歌曲所属专辑
 
