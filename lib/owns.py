@@ -121,7 +121,7 @@ class SongSheet:
         self.url = url
         self.created_time = created_time
 
-    def AddMusics(self, music: MusicInfoSheet):
+    def AddMusics(self, music: SongInfo):
         self.musics.append(music)
 
     # 按歌手名分组 歌单内各个歌手的歌曲数
@@ -309,9 +309,9 @@ class WangYiUser:
             author = tds[3].find("div", attrs={"class": "text"}).attrs["title"]  # 歌手名
             album = tds[4].find("div", attrs={"class": "text"}).find("a").attrs["title"]  # 专辑名
             if string_format(author).find("/") != -1:
-                song = MusicInfoSheet(name, string_format(author).split("/"), url, album)
+                song = SongInfo(name, string_format(author).split("/"), url, album)
             else:
-                song = MusicInfoSheet(name, string_format(author), url, album)
+                song = SongInfo(name, string_format(author), url, album)
             ss.AddMusics(song)
         return ss
 

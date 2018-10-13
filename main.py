@@ -4,11 +4,11 @@ from lib.visualize import *
 from lib.config import *
 from lib.driver import driver
 
-singer = Singer("陈百强", driver)
-list = singer.get_top_n_songs()
+singer = Singer("陈百强")
+list = singer.get_top_n_songs(100)
 for item in list:
-    print(item.name, item.url, item.singers, item.album)
-
+    lyric = item.get_lyric()
+    print(lyric)
 # music_u = get_musci_u("魔术师LYX")
 # # 获取cookie身份
 # wyu = WangYiUser(music_u)

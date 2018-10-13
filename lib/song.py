@@ -1,6 +1,7 @@
 from lib.owns import *
 from selenium.webdriver.chrome.webdriver import WebDriver
 from bs4 import BeautifulSoup
+from lib.driver import driver
 
 base_url = "https://music.163.com/"
 
@@ -15,6 +16,7 @@ class Song:
         self.name = name
         self.url = url
         self.album = album
+        self.driver = driver
         if type(singers) == str:
             self.singers = [singers]
         elif type(singers) == list:
@@ -23,8 +25,20 @@ class Song:
             assert "unknown type"
 
     # 获取歌曲歌词
-    def get_songs(self):
-        pass
+    def get_lyric(self) -> str:
+        self.driver.get(self.url)
+        self.driver.switch_to.frame("contentFrame")
+        bs = BeautifulSoup(self.driver.find_element_by_xpath('//div[@id="lyric-content"]').get_attribute("outerHTML"),
+                           "html.parser")
+
+        flag_more = bs.find("div", attrs={"id": "flag_more"}).text
+        crl = bs.find("div", attrs={"class": "crl"}).text
+        lyric_content = self.driver.find_element_by_xpath('//div[@id="lyric-content"]').text
+
+        lyric = lyric_content.replace(crl, "")
+        lyric = lyric.replace("\n", "")
+        lyric = lyric + flag_more
+        return lyric
 
 
 class Singer:
@@ -33,7 +47,7 @@ class Singer:
     owns_url = ""  # type: str
     song_search_url = ""  # type: str
 
-    def __init__(self, name: str, driver: WebDriver):
+    def __init__(self, name: str):
         self.name = name
         self.driver = driver
         self.__init_args()
@@ -70,7 +84,7 @@ class Singer:
                 singers_str = td_div[3].find_element_by_xpath("./div").text
                 singers = singers_str.split("/")
                 album = td_div[4].text
-                songs.append(Song(name, url, singers,album))
+                songs.append(Song(name, singers, url, album))
             self.driver.execute_script("document.getElementById('%s').click();" % next_page.get_attribute("id"))
 
         return songs
