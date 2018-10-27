@@ -5,14 +5,18 @@
 # cut = jieba.cut(words)
 # print(",".join(cut))
 
-wipe_words = ["陈百强","作曲", "作词", "你", "我", "他", "她", "它", "的", "得", "地", "-", " ", ":", ",", "都", "着", "是", "了", "这", "那"]
+# 单词白名单
+# 数组中的单词不会纳入进行统计
+wipe_words = ["周杰伦", "陈百强", "张国荣", "作曲", "作词", "你", "我", "他", "她", "它", "的", "得", "地", "-", " ", ":", ",", "都", "着", "是", "了", "这", "那", "..."]
 
 
 def word_statistics(words: list) -> dict:
     map = dict()
     for word in words:
+        # 不统计包含在白名单的
         if word in wipe_words:
             continue
+        # 不统计1个字符的
         if len(word) == 1:
             continue
         if word in map.keys():
