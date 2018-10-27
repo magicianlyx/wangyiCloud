@@ -11,11 +11,13 @@ class Song:
     singers = []  # type:list[str]
     album = ""  # type:str
     url = ""  # type:str
+    time = ""  # type:str
 
-    def __init__(self, name: str, singers, url: str, album: str):
+    def __init__(self, name: str, singers, url: str, album: str, time: str):
         self.name = name
         self.url = url
         self.album = album
+        self.time = time
         self.driver = driver
         if type(singers) == str:
             self.singers = [singers]
@@ -86,7 +88,9 @@ class Singer:
             srchsongst = self.driver.find_element_by_xpath('//*[@class="srchsongst"]')
             divs1 = srchsongst.find_elements_by_xpath('//div[@class="item f-cb h-flag  "]')
             divs2 = srchsongst.find_elements_by_xpath('//div[@class="item f-cb h-flag even "]')
-            song_divs = divs1 + divs2
+            divs3 = srchsongst.find_elements_by_xpath('//div[@class="item f-cb h-flag even js-dis"]')
+            divs3 = srchsongst.find_elements_by_xpath('//div[@class="item f-cb h-flag  js-dis"]')
+            song_divs = divs1 + divs2 + divs3
 
             for div in song_divs:
                 td_div = div.find_elements_by_xpath('./div')
@@ -96,7 +100,8 @@ class Singer:
                 singers_str = td_div[3].find_element_by_xpath("./div").text
                 singers = singers_str.split("/")
                 album = td_div[4].text
-                songs.append(Song(name, singers, url, album))
+                time = td_div[5].text
+                songs.append(Song(name, singers, url, album, time))
             if next_page is None:
                 break
             self.driver.execute_script("document.getElementById('%s').click();" % next_page.get_attribute("id"))

@@ -10,15 +10,20 @@ import jieba
 init_driver()
 
 # # 获取陈百强所有歌曲的信息并写入mongo
-singer = Singer("张国荣")
-list = singer.get_top_n_songs(1000)
-for item in list:
-    lyric = item.get_lyric()
-    print(lyric)
-    insert_songinfo(item.name, item.authors, item.album, item.url, lyric)
+# singer = Singer("周杰伦")
+# list = singer.get_top_n_songs(1000)
+# for item in list:
+#     lyric = item.get_lyric()
+#     print(lyric)
+#     insert_songinfo(item.name, item.authors, item.album, item.url, lyric, item.time)
 
-list = get_songinfos()
-print("song count:",len(list))
+# author = "陈百强"
+# author = "张国荣"
+# author = "梅艳芳"
+author = "谭咏麟"
+# author = "周杰伦"
+list = get_songinfos(author)
+print("song count:", len(list))
 words = []
 for item in list:
     lyric = item.lyric
@@ -29,12 +34,12 @@ diagrams = word_statistics(words)
 diagrams_part = dict()
 idx = 0
 for key in diagrams.keys():
-    if idx > 20:
+    if idx > 30:
         break
     idx += 1
     diagrams_part[key] = diagrams[key]
 
-draw_histogram(diagrams_part, "张国荣歌词top20词汇", "张国荣歌词top20词汇")
+draw_histogram(diagrams_part, "%s歌词top30词汇 （有效歌曲数%d）" % (author, len(list)), "%s歌词top20词汇" % author)
 for key, value in diagrams_part.items():
     print("word:", key, "  count: ", value)
 

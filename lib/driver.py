@@ -14,6 +14,6 @@ driver.implicitly_wait(4)
 
 def init_driver():
     driver.get("https://music.163.com")
-    music_u = get_musci_u("魔术师LYX")
+    music_u = get_musci_u("FongH_")
     driver.add_cookie({'name': 'MUSIC_U', 'value': music_u})
     driver.refresh()

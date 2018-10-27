@@ -27,16 +27,20 @@ class SongInfo:
         self.lyric = lyric
 
 
-def insert_songinfo(name: str, authors: list, album: str, song_url: str, lyric: str):
+def insert_songinfo(name: str, authors: list, album: str, song_url: str, lyric: str, time: str):
     authors = ','.join(authors)
-    si_tbl.insert({"name": name, "authors": authors, "album": album, "song_url": song_url, "lyric": lyric})
+    si_tbl.insert({"name": name, "authors": authors, "album": album, "song_url": song_url, "lyric": lyric, "time": time})
 
 
-def get_songinfos() -> list:
+def get_songinfos(authors) -> list:
     songs = []
     songs_name = []
     for i in si_tbl.find({}):
+        # 不获取live版的歌词
         if "live" in i["name"]:
+            continue
+        # 只获取该歌手的歌曲
+        if not authors in i["authors"]:
             continue
         if not i["name"] in songs_name:
             songs_name.append(i["name"])
