@@ -8,7 +8,7 @@ font = {'family': 'SimHei',
         'size': str(font_size)}
 plt.rc('font', **font)
 plt.rc('axes', unicode_minus=False)
-plt.rcParams['figure.figsize'] = (4.0, 4.0) # 设置figure_size尺寸
+plt.rcParams['figure.figsize'] = (6.0, 4.0) # 设置figure_size尺寸
 plt.rcParams['savefig.dpi'] = 300  # 图片像素
 # plt.rcParams['figure.dpi'] = 300
 

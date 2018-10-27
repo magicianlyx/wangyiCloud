@@ -19,7 +19,6 @@ class MusicBase:
     authors = []  # type:list[str]
 
 
-
 # 音乐信息（排行榜）
 class MusicInfoRank(MusicBase):
     play_time = 0  # 歌曲播放次数
@@ -147,10 +146,14 @@ class WangYiUser:
 
     def __init__(self, music_u):
         option = webdriver.ChromeOptions()
-        option.add_argument('disable-infobars')  # 不出现"Chrome正在受到自动软件的控制"的提示语
-        option.add_argument("headless")  # 不显示浏览器
-        option.add_argument('Accept-Charset="utf-8"')
+        # option.add_argument('disable-infobars')  # 不出现"Chrome正在受到自动软件的控制"的提示语
+        # option.add_argument("headless")  # 不显示浏览器
+        # option.add_argument('Accept-Charset="utf-8"')
+        # driver = webdriver.Chrome(chrome_options=option)
+
+        option.add_argument('disable-infobars')
         driver = webdriver.Chrome(chrome_options=option)
+
         action = ActionChains(driver)
         self.music_u = music_u
         self.driver = driver
@@ -163,6 +166,7 @@ class WangYiUser:
         self.driver.refresh()
         # 进入个人主页
         owns = self.driver.find_element_by_xpath('//*[@class="name f-thide f-fl f-tdn f-hide"]')
+        print(owns.get_attribute("href"))
         self.driver.get(owns.get_attribute("href"))
         self.driver.switch_to.frame(self.driver.find_element_by_tag_name("iframe"))
 
@@ -199,12 +203,13 @@ class WangYiUser:
 
     # 获取所有时间的播放排行榜
     def get_all_songsrank(self) -> RankSheet:
-        self.driver.get(self.url)
+        driver = self.driver
+        driver.get(self.url)
         self.driver.add_cookie({'name': 'MUSIC_U', 'value': self.music_u})
-        self.driver.refresh()
+        driver.refresh()
         # 进入个人主页
-        owns = self.driver.find_element_by_xpath('//*[@class="name f-thide f-fl f-tdn f-hide"]')
-        self.driver.get(owns.get_attribute("href"))
+        owns = WebDriverWait(self.driver, 10).until(lambda x: x.find_element_by_xpath('//*[@class="name f-thide f-fl f-tdn f-hide"]'))
+        driver.get(owns.get_attribute("href"))
         self.driver.switch_to.frame(self.driver.find_element_by_tag_name("iframe"))
         # 进入播放排行榜
         more = self.driver.find_element_by_xpath('//*[@id="more"]')

@@ -10,12 +10,12 @@ import jieba
 init_driver()
 
 # # 获取陈百强所有歌曲的信息并写入mongo
-# singer = Singer("陈百强")
-# list = singer.get_top_n_songs(1000)
-# for item in list:
-#     lyric = item.get_lyric()
-#     print(lyric)
-#     insert_songinfo(item.name, item.authors, item.album, item.url, lyric)
+singer = Singer("张国荣")
+list = singer.get_top_n_songs(1000)
+for item in list:
+    lyric = item.get_lyric()
+    print(lyric)
+    insert_songinfo(item.name, item.authors, item.album, item.url, lyric)
 
 list = get_songinfos()
 print("song count:",len(list))
@@ -34,7 +34,7 @@ for key in diagrams.keys():
     idx += 1
     diagrams_part[key] = diagrams[key]
 
-draw_histogram(diagrams_part, "陈百强歌词top20词汇", "陈百强歌词top20词汇")
+draw_histogram(diagrams_part, "张国荣歌词top20词汇", "张国荣歌词top20词汇")
 for key, value in diagrams_part.items():
     print("word:", key, "  count: ", value)
 
@@ -58,9 +58,10 @@ for key, value in diagrams_part.items():
 #         break
 #     idx += 1
 #     diagrams_part[key] = diagrams[key]
-# # draw_histogram(diagrams_part, "所有时间各个歌手歌曲播放次数", "all_time")
+# draw_histogram(diagrams_part, "所有时间各个歌手歌曲播放次数", "all_time")
+
 # draw_pie(diagrams_part, "魔术师LYX" + " TOP20 所有时间各个歌手歌曲播放次数", "魔术师LYX" + " all_time")
-#
+
 # # 获取最近一周播放排行榜 各个歌手的歌曲播放量
 # print("---------------获取最近一周播放排行榜 各个歌手的歌曲播放量-------------------")
 # sheet = wyu.get_last_week_songsrank()
