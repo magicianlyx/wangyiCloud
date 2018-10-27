@@ -19,6 +19,7 @@ def word_statistics(words: list) -> dict:
         # 不统计1个字符的
         if len(word) == 1:
             continue
+        word = word.lower()
         if word in map.keys():
             map[word] += 1
         else:
