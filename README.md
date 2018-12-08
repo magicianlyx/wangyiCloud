@@ -3,3 +3,7 @@
 
 
 ### 自己填入cookie music_u即可统计
+
+[img](/img/all_time.png)
+[img](/img/last_week.png)
+[img](/img/陈百强歌词top20词汇.png)

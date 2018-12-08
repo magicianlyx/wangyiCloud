@@ -144,17 +144,7 @@ class SongSheet:
 class WangYiUser:
     url = "https://music.163.com/#"
 
-    def __init__(self, music_u):
-        option = webdriver.ChromeOptions()
-        # option.add_argument('disable-infobars')  # 不出现"Chrome正在受到自动软件的控制"的提示语
-        # option.add_argument("headless")  # 不显示浏览器
-        # option.add_argument('Accept-Charset="utf-8"')
-        # driver = webdriver.Chrome(chrome_options=option)
-
-        option.add_argument('disable-infobars')
-        driver = webdriver.Chrome(chrome_options=option)
-
-        action = ActionChains(driver)
+    def __init__(self, music_u, driver, action):
         self.music_u = music_u
         self.driver = driver
         self.action = action

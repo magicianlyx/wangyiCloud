@@ -1,7 +1,6 @@
 from lib.owns import *
 from selenium.webdriver.chrome.webdriver import WebDriver
 from bs4 import BeautifulSoup
-from lib.driver import driver
 
 base_url = "https://music.163.com/"
 
@@ -13,7 +12,7 @@ class Song:
     url = ""  # type:str
     time = ""  # type:str
 
-    def __init__(self, name: str, singers, url: str, album: str, time: str):
+    def __init__(self, name: str, singers, url: str, album: str, time: str, driver):
         self.name = name
         self.url = url
         self.album = album
@@ -57,7 +56,7 @@ class Singer:
     owns_url = ""  # type: str
     song_search_url = ""  # type: str
 
-    def __init__(self, name: str):
+    def __init__(self, name: str, driver):
         self.name = name
         self.driver = driver
         self.__init_args()
